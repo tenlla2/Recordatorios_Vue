@@ -1,58 +1,154 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
+  <div class="container">
+    <div class="form-group">
+      <input type="text" class="form-control" v-model="nombre" @keyup.enter="anadir">
+    </div>
+    <hr>
+    <small
+      class="textopeque"
+    >{{tareasPendientes}} Tareas pendientes de un total de {{this.tareas.length}}</small> ||
+    <small @click="borraCompletadas">Borrar tareas completadas</small>
+
+    <hr>
+    <ul class="list-group">
+      <li class="list-group-item" v-for="(tarea,index) in tareasPorPrioridad" :key="tarea.id">
+        <div class="row">
+          <input class="checkbox-circle" type="checkbox" v-model="tarea.completada">
+          <h1
+            v-bind:class="[{completado : tarea.completada},'col-11','d-flex justify-content-start']"
+          >{{tarea.nombre}}</h1>
+          <button class="btn btn-danger" @click="borrar(index)">Borrar</button>
+        </div>
+        <div class="row">
+          <small>Prioridad:</small>
+          <button
+            type="button"
+            :class="['btn btn-xd', tarea.prioridad==1 ? 'b1' : 'desactivado',]"
+            @click="prioridad(index,'1')"
+          >Low</button>
+          <button
+            :class="['btn', tarea.prioridad==2 ? 'b3' : 'desactivado']"
+            @click="prioridad(index,'2')"
+          >Normal</button>
+          <button
+            :class="['btn', tarea.prioridad==3 ? 'b2' : 'desactivado']"
+            @click="prioridad(index,'3')"
+          >Hihg</button>
+          
+          <small>Añadido hace {{tarea.fecha}}</small>
+        </div>
+      </li>
     </ul>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
   props: {
     msg: String
+  },
+  data() {
+    return {
+      tareas: [],
+      nombre: ""
+    };
+  },
+  methods: {
+    anadir: function() {
+      this.tareas.push({
+        nombre: this.nombre,
+        completada: false,
+        prioridad: "1",
+        fecha: 0,
+        tiene: false
+      });
+      for (var i = 0; i < this.tareas.length; i++) {
+        if (this.tareas[i].tiene == false) {
+          this.tareas[i].fecha++;
+          this.tareas[i].tiene = true;
+        }
+      }
+      this.nombre = "";
+    },
+    borrar: function(index) {
+      this.tareas.splice(index, 1);
+    },
+    borraCompletadas: function() {
+      this.tareas = this.tareas.filter(tarea => !tarea.completada);
+    },
+    prioridad: function(index, n) {
+      this.tareas[index].prioridad = n;
+    },
+  },
+
+  updated: function() {
+    localStorage.setItem("recordatorios-vue", JSON.stringify(this.tareas));
+  },
+
+  computed: {
+    tareasPendientes: function() {
+      return this.tareas.filter(tarea => !tarea.completada).length;
+    },
+    tareasPorPrioridad: function() {
+      return this.tareas.sort((a, b) => b.prioridad - a.prioridad);
+    }
+  },
+
+  mounted: function() {
+    let datosDB = JSON.parse(localStorage.getItem("recordatorios-vue"));
+    if (datosDB === null) {
+      this.tareas = [];
+    } else {
+      this.tareas = datosDB;
+    }
   }
-}
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+li {
+  cursor: pointer;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+.completado {
+  text-decoration: line-through;
+  color: rgb(17, 185, 129);
+}
+.desactivado {
+  background: #646363;
+  margin-right: 10px;
+}
+.pequeño {
+  height: 20px;
+  width: 30px;
+  font-size: 9px;
+}
+small {
+  color: grey;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
 }
 li {
-  display: inline-block;
-  margin: 0 10px;
+  color: white;
+  background: #3a3939;
 }
-a {
-  color: #42b983;
+
+.b1 {
+  margin-right: 10px;
+  background: rgb(83, 83, 216);
+}
+
+.b2 {
+  margin-right: 10px;
+  background: rgb(216, 29, 29);
+}
+.b3 {
+  margin-right: 10px;
+  background: rgb(41, 41, 248);
+}
+.textopeque {
+  color: white;
 }
 </style>
+
