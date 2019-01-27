@@ -5,7 +5,7 @@
       <router-link class="text-light" to="/about">Tiempo</router-link>
     </div>
     <router-view/>
-    <Pie url="qefeqfqef"></Pie>
+    <Pie url="https://github.com/tenlla2/Recordatorios_Vue"></Pie>
   </div>
 </template>
 <script>
