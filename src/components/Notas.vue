@@ -2,7 +2,7 @@
   <div class="container">
     <br>
 
-    <div id="tit" class="h1">Proyecto Vue Antonio Tenllado Humanes</div>
+    <div id="tit" class="h1">Proyecto Vue.js- Antonio Tenllado Humanes</div>
     <div class="form-group">
       <input
         type="text"

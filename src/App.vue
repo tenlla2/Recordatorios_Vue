@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Recordatorios</router-link> |
-      <router-link to="/about">Tiempo</router-link>
+      <router-link class="text-light" to="/">Recordatorios</router-link> |
+      <router-link class="text-light" to="/about">Tiempo</router-link>
     </div>
     <router-view/>
     <Pie url="qefeqfqef"></Pie>
