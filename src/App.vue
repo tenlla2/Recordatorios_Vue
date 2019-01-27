@@ -5,8 +5,20 @@
       <router-link to="/about">About</router-link>
     </div>
     <router-view/>
+    <Pie url="qefeqfqef"></Pie>
   </div>
 </template>
+<script>
+import Pie from '@/components/Pie.vue'
+
+
+export default {
+  name: 'app',
+  components: {
+    Pie,
+  }
+}
+</script>
 
 <style>
 #app {
